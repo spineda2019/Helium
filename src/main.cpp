@@ -30,7 +30,11 @@ int main(int argc, char **argv) {
     return -4;
   }
 
-  Lexer::LexMainFile(file_name);
+  auto lexed_tokens = Lexer::LexMainFile(file_name);
+  if (!lexed_tokens.has_value()) {
+    std::cerr << "FATAL: Unknown token classification found" << std::endl;
+    return -1;
+  }
 
   return 0;
 }
