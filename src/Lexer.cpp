@@ -109,14 +109,14 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
 
     if (previous_character_type.has_value() &&
         current_character_type.value() != previous_character_type.value()) {
-      // finally done
-      current_lexeme_type = ClassifyLexeme(built_lexeme);
+      // should be an exhaustive condition enough to be done lexing
+      if (comment_found) {
+        current_lexeme_type = LexemeType::CommentWord;
+      } else {
+        current_lexeme_type = ClassifyLexeme(built_lexeme);
 
-      if (!current_lexeme_type.has_value()) {
-        if (!comment_found) {
+        if (!current_lexeme_type.has_value()) {
           return {};
-        } else {
-          current_lexeme_type = LexemeType::CommentWord;
         }
       }
 
