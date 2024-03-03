@@ -3,6 +3,7 @@
 #include <string>
 
 #include "include/Lexer.hpp"
+#include "include/Token.hpp"
 
 int main(int argc, char **argv) {
   std::string file_name{};
@@ -36,7 +37,7 @@ int main(int argc, char **argv) {
     return -1;
   } else {
     for (const auto &x : lexed_tokens.value()) {
-      std::cout << "Token: |" << x.GetIdentifier() << "| ";
+      std::cout << "Token: |" << x.GetIdentifier() << "|" << std::endl;
     }
   }
 
