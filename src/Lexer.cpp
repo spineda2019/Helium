@@ -107,18 +107,8 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
       comment_found = false;
     }
 
-    // determine if lexeme is done
-    if (!previous_character_type.has_value()) {
-      // TODO(sep): not done, special case of first character
-      built_lexeme.push_back(std::move(current_character));
-      previous_character_type = std::move(current_character_type);
-      continue;
-    }
-
-    if (current_character_type.value() == previous_character_type.value()) {
-      // still not done
-      built_lexeme.push_back(std::move(current_character));
-    } else {
+    if (previous_character_type.has_value() &&
+        current_character_type.value() != previous_character_type.value()) {
       // finally done
       current_lexeme_type = ClassifyLexeme(built_lexeme);
 
@@ -136,7 +126,6 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
                 << std::endl;
 
       switch (current_lexeme_type.value()) {
-      case LexemeType::Whitespace:
       case LexemeType::SimpleOperator:
       case LexemeType::CompoundOperator:
       case LexemeType::LeftParenthesis:
@@ -145,10 +134,13 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
       case LexemeType::RightBracket:
         tokens.emplace_back(built_lexeme, std::optional<std::string>{});
         break;
+      case LexemeType::CommentWord:
+      case LexemeType::Whitespace:
+        // Don't bother making a token
+        break;
       case LexemeType::CommentStart:
         comment_found = true;
-        tokens.emplace_back(built_lexeme, std::optional<std::string>{});
-      case LexemeType::CommentWord:
+        break;
       case LexemeType::IntegerLiteral:
         // TODO(sep)
         tokens.emplace_back(built_lexeme, built_lexeme);
@@ -163,9 +155,9 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
         break;
       }
       built_lexeme.clear();
-      built_lexeme.push_back(std::move(current_character));
     }
 
+    built_lexeme.push_back(std::move(current_character));
     previous_character_type = std::move(current_character_type);
   }
 
