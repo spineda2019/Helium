@@ -34,6 +34,10 @@ int main(int argc, char **argv) {
   if (!lexed_tokens.has_value()) {
     std::cerr << "FATAL: Unknown token classification found" << std::endl;
     return -1;
+  } else {
+    for (const auto &x : lexed_tokens.value()) {
+      std::cout << x.GetIdentifier() << " ";
+    }
   }
 
   return 0;
