@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "Token.hpp"
@@ -14,6 +15,14 @@ namespace Lexer {
 
 constexpr std::array<char, 6> valid_simple_operators{'+', '-', '/',
                                                      '*', '<', '>'};
+
+constexpr std::array<std::string_view, 6> valid_operators{"+", "-", "/",
+                                                          "*", "<", ">"};
+
+constexpr std::array<std::string_view, 5> valid_compound_operators{
+    "->", "+=", "-=", "*=", "/="};
+
+constexpr std::array<std::string_view, 1> valid_comment_starters{"//"};
 
 enum class CharacterType : std::uint8_t {
   NumberLiteral,
@@ -36,9 +45,11 @@ enum class LexemeType : std::uint8_t {
   IntegerLiteral,
   FloatLiteral,
   Identifier,
-  Empty
+  CommentStart,
+  Whitespace,
 };
 
+const std::optional<LexemeType> ClassifyLexeme(const std::string_view lexeme);
 const std::optional<CharacterType> ClassifyCharacter(const char &letter);
 
 int ProcessFileName(const std::string &file_name);
