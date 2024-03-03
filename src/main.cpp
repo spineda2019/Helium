@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     return -1;
   } else {
     for (const auto &x : lexed_tokens.value()) {
-      std::cout << x.GetIdentifier() << " ";
+      std::cout << "Token: |" << x.GetIdentifier() << "| ";
     }
   }
 
