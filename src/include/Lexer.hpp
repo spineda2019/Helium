@@ -32,6 +32,7 @@ enum class CharacterType : std::uint8_t {
   Operator,
   GroupingSymbol,
   SemiColon,
+  CommentLetter,
   Letter,
 };
 
@@ -46,6 +47,7 @@ enum class LexemeType : std::uint8_t {
   FloatLiteral,
   Identifier,
   CommentStart,
+  CommentWord,
   Whitespace,
 };
 

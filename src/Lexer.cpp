@@ -86,20 +86,20 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
   bool comment_found(false);
 
   std::optional<CharacterType> previous_character_type{};
-  std::optional<CharacterType> current_character_type(
-      CharacterType::Whitespace);
+  std::optional<CharacterType> current_character_type{};
   std::optional<LexemeType> current_lexeme_type{};
 
   while (main_file.get(current_character)) {
     std::cout << "\nfound a char: " << current_character
               << " ASCII: " << static_cast<int>(current_character) << std::endl;
-    current_character_type = ClassifyCharacter(current_character);
-    if (!current_character_type.has_value()) {
-      // Terminate Compilation
-      if (!comment_found) {
+    if (comment_found) {
+      current_character_type = CharacterType::CommentLetter;
+    } else {
+      current_character_type = ClassifyCharacter(current_character);
+
+      if (!current_character_type.has_value()) {
+        // Terminate Compilation
         return {};
-      } else {
-        continue;
       }
     }
 
@@ -126,8 +126,7 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
         if (!comment_found) {
           return {};
         } else {
-          built_lexeme.clear();
-          continue;
+          current_lexeme_type = LexemeType::CommentWord;
         }
       }
 
@@ -149,6 +148,7 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
       case LexemeType::CommentStart:
         comment_found = true;
         tokens.emplace_back(built_lexeme, std::optional<std::string>{});
+      case LexemeType::CommentWord:
       case LexemeType::IntegerLiteral:
         // TODO(sep)
         tokens.emplace_back(built_lexeme, built_lexeme);
