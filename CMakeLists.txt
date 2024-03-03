@@ -13,7 +13,9 @@ include_directories("src/include/")
 
 set(SOURCES
     "src/main.cpp"
-    "src/Lexer.cpp")
+    "src/Lexer.cpp"
+    "src/Token.cpp"
+    )
 
 add_executable(${EXECUTABLE_NAME} ${SOURCES})
 install(TARGETS ${EXECUTABLE_NAME})
