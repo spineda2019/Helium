@@ -13,11 +13,11 @@
 
 namespace Lexer {
 
-constexpr std::array<char, 6> valid_simple_operators{'+', '-', '/',
-                                                     '*', '<', '>'};
+constexpr std::array<char, 7> valid_simple_operators{'+', '-', '/', '*',
+                                                     '<', '>', '='};
 
-constexpr std::array<std::string_view, 6> valid_operators{"+", "-", "/",
-                                                          "*", "<", ">"};
+constexpr std::array<std::string_view, 7> valid_operators{"+", "-", "/", "*",
+                                                          "<", ">", "="};
 
 constexpr std::array<std::string_view, 5> valid_compound_operators{
     "->", "+=", "-=", "*=", "/="};

@@ -91,8 +91,8 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
   std::optional<LexemeType> current_lexeme_type{};
 
   while (main_file.get(current_character)) {
-    std::cout << "found a char: " << current_character
-              << "ASCII: " << static_cast<int>(current_character) << std::endl;
+    std::cout << "\nfound a char: " << current_character
+              << " ASCII: " << static_cast<int>(current_character) << std::endl;
     current_character_type = ClassifyCharacter(current_character);
     if (!current_character_type.has_value()) {
       // Terminate Compilation
@@ -121,9 +121,21 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
     } else {
       // finally done
       current_lexeme_type = ClassifyLexeme(built_lexeme);
+
       if (!current_lexeme_type.has_value()) {
-        return {};
+        if (!comment_found) {
+          return {};
+        } else {
+          built_lexeme.clear();
+          continue;
+        }
       }
+
+      std::cout << "Lexeme Found: " << built_lexeme
+                << " Type: " << static_cast<int>(current_lexeme_type.value())
+                << std::endl
+                << std::endl;
+
       switch (current_lexeme_type.value()) {
       case LexemeType::Whitespace:
       case LexemeType::SimpleOperator:
@@ -150,6 +162,8 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
         tokens.emplace_back(built_lexeme, std::optional<std::string>{});
         break;
       }
+      built_lexeme.clear();
+      built_lexeme.push_back(std::move(current_character));
     }
 
     previous_character_type = std::move(current_character_type);
