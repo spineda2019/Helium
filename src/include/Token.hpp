@@ -9,6 +9,8 @@ public:
   Token(std::optional<std::string> identifier,
         std::optional<std::string> literal_value);
 
+  std::string GetIdentifier() const;
+
 private:
   std::optional<std::string> identifier_;
   std::optional<std::string> literal_value_;
