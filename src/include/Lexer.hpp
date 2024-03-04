@@ -53,6 +53,7 @@ enum class LexemeType : std::uint8_t {
 
 const std::optional<LexemeType> ClassifyLexeme(const std::string_view lexeme);
 const std::optional<CharacterType> ClassifyCharacter(const char &letter);
+const bool IsLexemeEmpty(const std::string_view lexeme);
 
 int ProcessFileName(const std::string &file_name);
 std::optional<std::vector<Token>> LexMainFile(const std::string &file_name);

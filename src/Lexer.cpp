@@ -23,6 +23,16 @@ int ProcessFileName(const std::string &file_name) {
   }
 }
 
+const bool IsLexemeEmpty(const std::string_view lexeme) {
+  for (const char &letter : lexeme) {
+    if (!std::isspace(letter)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 const std::optional<LexemeType> ClassifyLexeme(const std::string_view lexeme) {
   if (lexeme == "(") {
     return LexemeType::LeftParenthesis;
@@ -43,8 +53,7 @@ const std::optional<LexemeType> ClassifyLexeme(const std::string_view lexeme) {
                        valid_comment_starters.end(),
                        lexeme) != valid_comment_starters.end()) {
     return LexemeType::CommentStart;
-  } else if (lexeme.find_last_not_of(' ') == std::string::npos ||
-             lexeme == "\n") {
+  } else if (IsLexemeEmpty(lexeme)) {
     return LexemeType::Whitespace;
   } else {
     return LexemeType::Identifier;
