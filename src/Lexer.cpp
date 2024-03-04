@@ -43,7 +43,8 @@ const std::optional<LexemeType> ClassifyLexeme(const std::string_view lexeme) {
                        valid_comment_starters.end(),
                        lexeme) != valid_comment_starters.end()) {
     return LexemeType::CommentStart;
-  } else if (lexeme.find_last_not_of(' ') == std::string::npos) {
+  } else if (lexeme.find_last_not_of(' ') == std::string::npos ||
+             lexeme == "\n") {
     return LexemeType::Whitespace;
   } else {
     return LexemeType::Identifier;
