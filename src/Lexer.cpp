@@ -45,6 +45,10 @@ const std::optional<LexemeType> ClassifyLexeme(const std::string_view lexeme) {
   } else if (std::find(valid_operators.begin(), valid_operators.end(),
                        lexeme) != valid_operators.end()) {
     return LexemeType::SimpleOperator;
+  } else if (lexeme == "{") {
+    return LexemeType::LeftBrace;
+  } else if (lexeme == "}") {
+    return LexemeType::RightBrace;
   } else if (std::find(valid_compound_operators.begin(),
                        valid_compound_operators.end(),
                        lexeme) != valid_compound_operators.end()) {
@@ -78,6 +82,10 @@ const std::optional<CharacterType> ClassifyCharacter(const char &letter) {
     return CharacterType::Operator;
   } else if (letter == '(' || letter == ')') {
     return CharacterType::GroupingSymbol;
+  } else if (letter == '{') {
+    return CharacterType::LeftScopeDelimiter;
+  } else if (letter == '}') {
+    return CharacterType::RightScopeDelimiter;
   } else if (letter == ';') {
     return CharacterType::SemiColon;
   } else if (std::isalpha(letter)) {
@@ -136,6 +144,8 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
                 << std::endl;
 
       switch (current_lexeme_type.value()) {
+      case LexemeType::RightBrace:
+      case LexemeType::LeftBrace:
       case LexemeType::SimpleOperator:
       case LexemeType::CompoundOperator:
       case LexemeType::LeftParenthesis:
