@@ -59,17 +59,33 @@ const std::optional<LexemeType> ClassifyLexeme(const std::string_view lexeme) {
     return LexemeType::CommentStart;
   } else if (IsLexemeEmpty(lexeme)) {
     return LexemeType::Whitespace;
+  } else if (std::find(primitive_types.begin(), primitive_types.end(),
+                       lexeme) != primitive_types.end()) {
+    return LexemeType::PrimitiveType;
   } else {
     return LexemeType::Identifier;
     // FOR NOW, TODO(sep) bring back return {};
   }
 }
+namespace {
+bool LexemeStartsWithType(const std::string_view incomplete_lexeme) {
+  return incomplete_lexeme.contains("sint") ||
+         incomplete_lexeme.contains("uint") ||
+         incomplete_lexeme.contains("float");
+}
+} // namespace
 
-const std::optional<CharacterType> ClassifyCharacter(const char &letter) {
+const std::optional<CharacterType>
+ClassifyCharacter(const char &letter,
+                  const std::string_view incomplete_lexeme) {
   std::cout << "Classify function found char: " << letter
             << " ASCII: " << static_cast<int>(letter) << std::endl;
   if (std::isdigit(letter)) {
-    return CharacterType::NumberLiteral;
+    if (LexemeStartsWithType(incomplete_lexeme)) {
+      return CharacterType::PartOfType;
+    } else {
+      return CharacterType::NumberLiteral;
+    }
   } else if (letter == '.') {
     return CharacterType::Decimal;
   } else if (letter == '\n') {
@@ -113,7 +129,8 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
     if (comment_found) {
       current_character_type = CharacterType::CommentLetter;
     } else {
-      current_character_type = ClassifyCharacter(current_character);
+      current_character_type =
+          ClassifyCharacter(current_character, built_lexeme);
 
       if (!current_character_type.has_value()) {
         // Terminate Compilation
@@ -125,8 +142,11 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
       comment_found = false;
     }
 
-    if (previous_character_type.has_value() &&
-        current_character_type.value() != previous_character_type.value()) {
+    // this is heinous, look to refactor
+    if (!(previous_character_type == CharacterType::Letter &&
+          current_character_type == CharacterType::PartOfType) &&
+        (previous_character_type.has_value() &&
+         current_character_type.value() != previous_character_type.value())) {
       // should be an exhaustive condition enough to be done lexing
       if (comment_found) {
         current_lexeme_type = LexemeType::CommentWord;
@@ -144,6 +164,7 @@ std::optional<std::vector<Token>> LexMainFile(const std::string &file_name) {
                 << std::endl;
 
       switch (current_lexeme_type.value()) {
+      case LexemeType::PrimitiveType:
       case LexemeType::RightBrace:
       case LexemeType::LeftBrace:
       case LexemeType::SimpleOperator:
