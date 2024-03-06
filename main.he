@@ -1,3 +1,4 @@
 sint foo = 4
-// This is an example of a useless file
-// # this shoudl fail because we don't know what pound signs are (commented to compile)
+function foo(float bar) -> sint {}
+// This is an example of a comment that won't be tokenized
+
